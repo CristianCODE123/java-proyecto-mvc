@@ -1,0 +1,163 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema concesionario3
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema concesionario3
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `concesionario3` DEFAULT CHARACTER SET utf8 ;
+USE `concesionario3` ;
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`catalogo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`catalogo` (
+  `idCatalogo` INT NOT NULL AUTO_INCREMENT,
+  `Marca` VARCHAR(45) NOT NULL,
+  `Modelo` VARCHAR(45) NULL DEFAULT NULL,
+  `Cilindraje` INT NOT NULL,
+  `Precio` INT NOT NULL,
+  `matricula` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idCatalogo`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 30
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`cliente` (
+  `idCliente` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  `correo` VARCHAR(45) NOT NULL,
+  `dni` VARCHAR(45) NULL DEFAULT NULL,
+  `telefono` VARCHAR(45) NULL DEFAULT NULL,
+  `Direccion` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(80) NOT NULL,
+  `fecha_nacimiento` DATE NOT NULL,
+  PRIMARY KEY (`idCliente`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 17
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`opciones_adicionales`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`opciones_adicionales` (
+  `idOpciones_Adicionales` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(1000) NOT NULL,
+  `descripcion` LONGTEXT NOT NULL,
+  `idCatalogo` INT NOT NULL DEFAULT '0',
+  `nombre2` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`idOpciones_Adicionales`),
+  INDEX `id_catalogo_idx` (`idCatalogo` ASC) VISIBLE,
+  CONSTRAINT `id_catalogo`
+    FOREIGN KEY (`idCatalogo`)
+    REFERENCES `concesionario3`.`catalogo` (`idCatalogo`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 31
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`tipo_usuario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`tipo_usuario` (
+  `id_tipoUsuario` INT NOT NULL AUTO_INCREMENT,
+  `cliente` INT NOT NULL,
+  `vendedor` INT NOT NULL,
+  `idCliente` INT NOT NULL,
+  PRIMARY KEY (`id_tipoUsuario`),
+  INDEX `cliente_idx` (`idCliente` ASC) VISIBLE,
+  CONSTRAINT `cliente`
+    FOREIGN KEY (`idCliente`)
+    REFERENCES `concesionario3`.`cliente` (`idCliente`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 10
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`tipo_vehiculo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`tipo_vehiculo` (
+  `idVehiculo` INT NOT NULL AUTO_INCREMENT,
+  `Estado_Auto` SET('nuevo', 'usado') NOT NULL,
+  PRIMARY KEY (`idVehiculo`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`vehiculo_usado_venta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`vehiculo_usado_venta` (
+  `idvehiculo_usado_venta` INT NOT NULL AUTO_INCREMENT,
+  `marca` VARCHAR(45) NOT NULL,
+  `modelo` VARCHAR(45) NOT NULL,
+  `matricula` VARCHAR(45) NOT NULL,
+  `precio_tasacion` INT NOT NULL,
+  `fecha_Sesion` DATE NOT NULL,
+  `id_cliente` INT NOT NULL,
+  PRIMARY KEY (`idvehiculo_usado_venta`),
+  INDEX `id_cliente_idx` (`id_cliente` ASC) VISIBLE,
+  CONSTRAINT `id_cliente`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `concesionario3`.`cliente` (`idCliente`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`vendedor_catalogo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`vendedor_catalogo` (
+  `idvendedor_catalogo` INT NOT NULL AUTO_INCREMENT,
+  `idvendedor` INT NOT NULL,
+  `idCatalogo` INT NOT NULL,
+  PRIMARY KEY (`idvendedor_catalogo`),
+  INDEX `vendedor_idx` (`idvendedor` ASC) VISIBLE,
+  INDEX `catalogo_idx` (`idCatalogo` ASC) VISIBLE,
+  CONSTRAINT `catalogo`
+    FOREIGN KEY (`idCatalogo`)
+    REFERENCES `concesionario3`.`catalogo` (`idCatalogo`),
+  CONSTRAINT `vendedorCliente`
+    FOREIGN KEY (`idvendedor`)
+    REFERENCES `concesionario3`.`cliente` (`idCliente`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 34
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `concesionario3`.`ventas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `concesionario3`.`ventas` (
+  `idVentas` INT NOT NULL AUTO_INCREMENT,
+  `idCliente` INT NOT NULL,
+  `idCatalogo` INT NOT NULL,
+  `idVehiculo` INT NULL DEFAULT NULL,
+  `Precio` INT NOT NULL,
+  `idvendedor` INT NOT NULL,
+  PRIMARY KEY (`idVentas`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 15
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
